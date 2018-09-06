@@ -1,0 +1,302 @@
+/* import font */
+
+@font-face {
+  font-family: 'slapstick_comic';
+  src: url('../fonts/SF_Slapstick_Comic-webfont.eot');
+  src: url('../fonts/SF_Slapstick_Comic-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/SF_Slapstick_Comic-webfont.woff') format('woff'), url('../fonts/SF_Slapstick_Comic-webfont.ttf') format('truetype'), url('../fonts/SF_Slapstick_Comic-webfont.svg#slapstick_comic') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: white;
+}
+
+p {
+  font-size: 100%;
+}
+
+/* body */
+
+body {
+  font-family: 'slapstick_comic';
+  font-size: 22px;
+  line-height: 1.136;
+  /* exactly 25px line height */
+  background: url(../images/carbon_fibre.png);
+  /*background body image */
+  color: #311413;
+}
+
+#errorMsg1,
+#errorMsg2 {
+  color: #ba0000;
+}
+
+.panel {
+  background: url(../images/square-bg.png);
+  border: solid 2px #000;
+  border-radius: 10px;
+  box-shadow: 0 6px 6px -6px #000;
+  flex: 1 1;
+  height: 200px;
+  margin: 1vmin;
+  overflow: hidden;
+  position: relative;
+  padding: 20px;
+}
+
+.panel-title {
+  background: url(../images/square-bg.png);
+  border: solid 2px #000;
+  border-radius: 10px;
+  box-shadow: 0 6px 6px -6px #000;
+  flex: 1 1;
+  height: 150px;
+  margin: 1vmin;
+  overflow: hidden;
+  position: relative;
+  padding: 20px;
+}
+
+.panel h2,
+h1 {
+  text-align: center;
+  vertical-align: middle;
+  /* line-height: 150px; */
+}
+
+.panel title h2,
+h1 {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 75px;
+}
+
+.panel-game h2 {
+  text-align: center;
+  vertical-align: middle;
+  /* line-height: 150px; */
+}
+
+input#name {
+  height: 30px;
+  margin-bottom: 10px;
+}
+
+input#name2 {
+  height: 30px;
+  margin-bottom: 10px;
+}
+
+.text {
+  background-color: #fff;
+  border: solid 2px #000;
+  margin: 0;
+  padding: 3px 10px;
+}
+
+.top-left {
+  left: -6px;
+  position: absolute;
+  top: -2px;
+  transform: skew(-15deg);
+  padding-left: 15px;
+}
+
+.bottom-right {
+  bottom: -2px;
+  position: absolute;
+  right: -6px;
+  transform: skew(-15deg);
+  padding-right: 15px;
+}
+
+/* separates text */
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin-bottom: 15px;
+  /* space that follows headers and paragraphs */
+}
+
+/* colours and text shadow for headers */
+
+h1,
+h2,
+h3,
+h4 {
+  text-shadow: 0 5px 5px rgba(0, 0, 0, 1);
+  /* text shadow for headers */
+}
+
+h3 {
+  margin-top: 30px;
+  float: left;
+}
+
+h4 {
+  margin-top: 25px;
+}
+
+#player-1-name,
+#player-2-name {
+  text-align: center;
+}
+
+.wins-position {
+  float: left;
+}
+
+.losses-position {
+  float: right;
+}
+
+/* individual font sizes */
+
+h1 {
+  font-size: 250%;
+}
+
+h2 {
+  font-size: 200%;
+}
+
+h3 {
+  font-size: 150%;
+}
+
+h4 {
+  font-size: 150%;
+}
+
+.choice {
+  transform: skew(-15deg);
+  padding: 5px;
+  margin: 10px 10px 10px 0px;
+  color: white;
+}
+
+@media only screen and (max-width: 610px) {
+  h1,
+  h2 {
+    font-size: 140%;
+  }
+}
+
+.social-share{
+text-align: center;
+}
+
+.twitter-share,
+.facebook-share {
+  /* background: rgb(87, 207, 244);
+  font-family: 'slapstick_comic';	 
+  background: rgb(87, 87, 248); 
+  color:white; */
+  background: white;
+  color: black;
+  border: 2px solid;
+  transform: skew(-15deg);
+  cursor: pointer;
+  display: inline-block;
+  padding: 1em 1em;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+}
+
+i.fa.fa-facebook{
+  color:royalblue;
+}
+
+i.fa.fa-twitter{
+  color: deepskyblue;
+}
+
+.twitter-share:hover,
+.facebook-share:hover {
+  position: relative;
+  top: -1px;
+  text-decoration:none;
+  border: 2px solid black;
+  color:black;
+}
+
+.send-link{
+  margin-top:30px;
+}
+.send-link a{
+  color:#c40000;
+  text-shadow: none;
+  text-decoration: none;
+}
+
+.image-of-character{
+  float: right; 
+  position: absolute; 
+  right: 20px; 
+  top: 30px;
+}
+
+.btn-warning{
+  color: white !important;
+  background-color: #bd0315 !important;
+  border-color: #bd0315 !important;
+  margin-top:20px;
+}
+
+.movie-image{
+  text-align:center;
+}
+
+#movie-title-h3{
+float: none !important;
+margin:0 !important;
+margin-bottom:10px !important;
+text-align:center;
+}
+
+@media only screen and (max-width: 980px){
+
+  .image-of-character{
+    float: right; 
+    position: absolute; 
+    right: 20px; 
+    top: 30px;
+    width: 5%;
+    height: 5%
+  }
+}
+
+@media only screen and (max-width: 640px){
+
+  .image-of-character{
+    float: right; 
+    position: absolute; 
+    right: 20px; 
+    top: 30px;
+    width: 5%;
+    height: 5%
+  }
+}
+
+@media only screen and (max-width: 520){
+
+  .image-of-character{
+    float: right; 
+    position: absolute; 
+    right: 20px; 
+    top: 30px;
+    width: 5%;
+    height: 5%
+  }
+}
+
+
+

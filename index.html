@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>SuperHero Showdown</title>
+
+    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+
+    <!-- Link Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+
+    <!-- UIkit CSS -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.40/css/uikit.min.css" /> -->
+
+    <!-- Add icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- UIkit JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.40/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.40/js/uikit-icons.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+    <meta property="og:url" content="https://adam28p.github.io/Project-1" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SuperHero Showdown" />
+    <meta property="og:description" content="Test your superhero skills" />
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-title">
+                    <p class="text top-left">Introducing...</p>
+                    <h1 id="title">SuperHero Showdown</h1>
+                    <p class="text bottom-right">...it's super fun!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid ">
+        <div class="row">
+            <div class="col-md-6">
+                <div style="height:100%; line-height:28px;" class="card mb-2 rules panel">
+                    <h3 id="movie-title-h3">Game rules:</h3>
+                    <ul>
+                        <li>You first begin by entering a player name for yourself.</li>
+                        <li>You will then need to share the URL with a second opponent so they can enter in a player name.</li>
+                        <li>Once both users have entered a player name, the game will begin.</li>
+                        <li>You will face a total of 10 questions.</li>
+                        <li>Select the correct answer out of the 4 choices provided for each question.</li>
+                        <li>You will have a maximum of 8 seconds to answer each question.</li>
+                        <li>The game lasts for an overall time of 80 seconds.</li>
+                        <li>When the game is over you will be able to see your results against your opponent and share the game on Twitter.</li>
+                    </ul>
+                    <hr>
+                    <a href="#" id="startgame" class="btn btn-success btn-lg">START GAME</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div style="height:100%;" class="card mb-2 rules panel">
+                    <div id="movies-view">
+                        <table width="100%">
+                            <tr>
+                                <td><h3 id="movie-title-h3"><div class="movie-title">Press the button below for a Marvel movie recommendation!</div></h3></td>
+                            </tr>
+                            <tr>
+                                <td><div class="movie-image"></div></td>
+                            </tr>
+                        </table>
+                       
+                        
+                    </div>
+                    <a href="#" id="Marvel-Data" class="btn btn-warning btn-lg">Random Marvel Movie Recommendation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+
+    <div class="container-fluid All-Game">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel">
+                    <p class="text top-left">Player 1...</p>
+                    <h4 id="player-1-name">Waiting for player 1</h4>
+                    <div id="name-join-1">
+                        <input class="uk-input" placeholder="Enter name here..." id="name" type="text" name="" value="">
+                        <button class="uk-button uk-button-primary" id="join" type="button" name="button">Add Player</button>
+                    </div>
+                    <span id="errorMsg1"></span>
+                    <span id="wins-losses-1">
+                        <h4 class="wins-position">Right:
+                            <span id="player-1-wins"></span>
+                        </h4>
+                        <h4 class="losses-position">Wrong:
+                            <span id="player-1-losses"></span>
+                        </h4>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel">
+                    <p class="text top-left">Time remaining...</p>
+                    <br>
+                    <!-- <button class="uk-button uk-button-primary" id="startgame" type="button" name="button">Start Game</button> -->
+                    <div class="timer text-center"></div>
+                    <p class="text bottom-right">...hurry before it's too late!</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel">
+                    <p class="text top-left">Player 2...</p>
+                    <h4 id="player-2-name">Waiting for player 2</h4>
+                    <div id="name-join-2">
+                        <input class="uk-input" placeholder="Enter name here..." id="name2" type="text" name="" value="">
+                        <button class="uk-button uk-button-primary" id="join2" type="button" name="button">Add Player</button>
+                    </div>
+                    <span id="errorMsg2"></span>
+                    <span id="wins-losses-2">
+                        <h4 class="wins-position">Right:
+                            <span id="player-2-wins">0</span>
+                        </h4>
+                        <h4 class="losses-position">Wrong:
+                            <span id="player-2-losses">0</span>
+                        </h4>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid All-Game">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel" style="height:300px !important;">
+                    <p class="text top-left">Defeat crime by answering this question...</p>
+                    <br />
+                    <h2 style="text-align:left; float:left; font-size:125%; width:100%;" class="send-link">Send this link to an opponent so they can join:
+                        <br />
+                        <a href="https://adam28p.github.io/Project-1">https://adam28p.github.io/Project-1</a>
+                    </h2>
+                    <h2 style="text-align:left; float:left; font-size:150%; width:75%;" class="question"></h2>
+                    <div style="float:left; width:75%;" id="questionDisplay">
+                        <button type="button" class="btn btn-lg btn-primary choice Ch1"></button>
+                        <button type="button" class="btn btn-lg btn-primary choice Ch2"></button>
+                        <button type="button" class="btn btn-lg btn-primary choice Ch3"></button>
+                        <button type="button" class="btn btn-lg btn-primary choice Ch4"></button>
+                    </div>
+                    <div class="image-of-character"> </div>
+
+                    <div class="social-share">
+                        <h2 style="float:left; width:100%;" class="game-over-text">Game Over!</h2>
+                        <br>
+                        <br>
+                        <br>
+                        <a class="twitter-share" href="http://twitter.com/intent/tweet?text=I%20just%20kicked%20butt%20in%20the%20ultimate%20SuperHero%20Showdown%20Trivia%20Game!%20You%20can%20too%3A&amp;url=https%3A%2F%2Fadam28p.github.io/Project-1"
+                            target="_blank">
+                            <i class="fa fa-twitter"></i> Share on Twitter</a>
+                        <!-- <a class="facebook-share" href="" target="_blank"><i class="fa fa-facebook"></i> Share on Facebook</a>  -->
+                        <!-- <span class="facebook-share text-center" data-js="facebook-share"><i class="fa fa-facebook"></i> Share on Facebook</span> -->
+                    </div>
+                    <p class="text bottom-right">...think fast to win!</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel" style="height:300px !important;">
+                    <p id="State-display" class="text top-left">See how you did...</p>
+                    <button style="float:right;" class="uk-button uk-button-primary" id="reset" type="button" name="button">Quit Game</button>
+
+                    <table class="table" style="margin-top:60px;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Player</th>
+                                <th scope="col">Right</th>
+                                <th scope="col">Wrong</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="name1table"></td>
+                                <td id="wins1table"></td>
+                                <td id="loss1table"></td>
+                            </tr>
+                            <tr>
+                                <td id="name2table"></td>
+                                <td id="wins2table"></td>
+                                <td id="loss2table"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <p class="text bottom-right">...the end!</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="assets/js/test.js" charset="utf-8"></script>
+</body>
+
+</html>
