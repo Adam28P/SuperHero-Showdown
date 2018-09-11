@@ -1,9 +1,12 @@
 var timer;
 var time = 60;
-var TOTAL_GAME_TIME = 80;
 var currentGameTime = 0;
 var END_INTERVAL = 0;
 var START_INTERVAL = 60;
+
+var i = 0;
+var currentQuestion = 1;
+var answer;
 
 var questionArray = [{
         question: "What is Spiderman's real name?",
@@ -256,13 +259,11 @@ document.getElementById('join2').addEventListener('click', function () {
 document.getElementById('reset').addEventListener('click', function () {
     database.ref('/players').child('1').remove()
     database.ref('/players').child('2').remove()
-    database.ref('/questions').child('2').remove()
+    database.ref().child('/currentQuestion').remove()
     database.ref('/start-game').set({
         gameStarted: false
     })
-    database.ref('/show-question').set({
-        show: false
-    })
+
     localStorage.clear();
     location.reload();
 })
@@ -296,14 +297,15 @@ database.ref('/players').on('value', function (snapshot) {
     // if only player 1 is in the game
     if (snapshot.hasChild('1')) {
         $(".send-link").show();
+    } 
+    if (snapshot.hasChild('2')) {
+        $(".send-link").hide();
     }
 
     // If both players are in game run all of this
-    if (snapshot.hasChild('1') && snapshot.hasChild('2')) {
-        console.log('both players are present');
-        $(".send-link").hide();
+    if (snapshot.hasChild('1') && snapshot.hasChild('2') && i === 0) {
         loadNextQuestion();
-        marvelAPI(currentQuestion);
+        marvelAPI();
     }
 })
 
@@ -311,48 +313,22 @@ database.ref('/players').on('value', function (snapshot) {
 function setTimer() {
     //every 1 sec check db for score updates and increment timer
     timer = setInterval(updatetimer, 1000)
-    console.log("setting timer")
 }
 
 function updatetimer() {
 
 
-    //STOP THE GAME IF TOTAL GAME TIME is Up
-    if (TOTAL_GAME_TIME === currentGameTime) {
-        database.ref('/show-question').set({
-            show: false
-        });
-        console.log("Game Over")
-        clearInterval(timer)
-        endgame();
-        return
-    }
-
-    console.log("current time", time)
-    currentGameTime++
-    console.log("Current Game Time", currentGameTime)
     $(".timer").html("<h2>" + time + "<h2>");
 
-    //check the 10 second interval for each question
+    //check the 60 second interval for each question
     if (time === END_INTERVAL) {
-
-        var ref = firebase.database().ref("/questions/");
-        ref.once("value")
-            .then(function (snapshot) {
-                var numberOfQuestions = snapshot.numChildren();
-                //check if its the last question
-                console.log("currentQuestion " + currentQuestion)
-                console.log("numberOfQuestions " + numberOfQuestions)
-                if (currentQuestion > numberOfQuestions) {
-                    //setTimeout(endgame, 4000);                    
-                    endgame();
-                } else {
-                    currentQuestion++;
-                    // setTimeout(loadNextQuestion(currentQuestion), 5000);
-                    loadNextQuestion(currentQuestion);
-                    marvelAPI(currentQuestion);
-                }
-            });
+        if (i >= questionArray.length) {
+            endgame();
+        } else {
+            i++;
+            loadNextQuestion();
+            marvelAPI();
+        }
 
     } else {
         //time = seconds for each question
@@ -361,18 +337,13 @@ function updatetimer() {
 
 }
 
-var i = 0;
-var currentQuestion = 1;
-var answer;
-// var currentQuest = 'q' + currentQuestion
-
 function loadNextQuestion() {
     clearInterval(timer);
-    console.log("loading next question");
+    console.log("loading next question: " + i);
     setTimer();
     time = START_INTERVAL;
 
-    database.ref().child('/currentQuestion').update({
+    database.ref('/currentQuestion').set({
         question: questionArray[i].question,
         option1: questionArray[i].option1,
         option2: questionArray[i].option2,
@@ -382,26 +353,13 @@ function loadNextQuestion() {
         characterId: questionArray[i].characterId
     });
 
-    database.ref().child('/currentQuestion').on('value', function (snapshot) {
-        console.log("HERE", snapshot);
+    database.ref('/currentQuestion').on('value', function (snapshot) {
         answer = snapshot.val().answer;
         $(".question").html(snapshot.val().question);
         $(".Ch1").html(snapshot.val().option1);
         $(".Ch2").html(snapshot.val().option2);
         $(".Ch3").html(snapshot.val().option3);
         $(".Ch4").html(snapshot.val().option4);
-    });
-
-    
-
-
-
-
-    // var nextQuest = 'q' + nextQuestNum;
-    console.log("Inside loadNextQuestion:- ");
-    console.log("nextQuest: " + nextQuest);
-    database.ref('/show-question').set({
-        show: true
     });
 
 
@@ -414,32 +372,21 @@ function loadNextQuestion() {
 // Clicking on a multiple choice answer.
 $(".choice").on("click", function () {
     $(".image-of-character").show();
-    nextQuestNum = currentQuestion;
-    // var nextQuest = 'q' + nextQuestNum;
-    database.ref('/show-question').set({
-        show: false
-    });
 
     var picked = $(this).text();
     i++;
 
-    database.ref().child('/currentQuestion').once("value", function (snapshot) {
-        // currentQuestion++;
-       
-       
-    });
-
- if (picked === answer) {
-            rightanswer();
-        } else {
-            wronganswer();
-        }
+    if (picked === answer) {
+        rightanswer();
+    } else {
+        wronganswer();
+    }
 
 
-        if (i === questionArray.length) {
-            //setTimeout(endgame, 4000);
-            endgame();
-        }
+    if (i === questionArray.length) {
+        //setTimeout(endgame, 4000);
+        endgame();
+    }
 });
 // }
 
@@ -573,11 +520,11 @@ function marvelAPI() {
         return d << _ | d >>> 32 - _
     }
     var result = MD5(ts + PRIV_KEY + PUBLIC_KEY).toString();
-    // var nextQuest = 'q' + nextQuestNum;
+
     database.ref().child('/currentQueston').on("value", function (snapshot) {
         var marvelQuery = 'https://gateway.marvel.com/v1/public/characters/' + snapshot.val().characterId;
 
-        console.log(marvelQuery);
+        // console.log(marvelQuery);
         $.getJSON(marvelQuery, {
                 ts: ts,
                 apikey: PUBLIC_KEY,
@@ -588,7 +535,7 @@ function marvelAPI() {
                 characterDiv.addClass("card");
                 characterDiv.attr("style", "float:left; margin: 0px; width:200px;");
                 // sort of a long dump you will need to sort through
-                console.log(response);
+                // console.log(response);
                 var path = (response.data.results[0].thumbnail.path);
                 var extension = (response.data.results[0].thumbnail.extension);
 
@@ -651,18 +598,10 @@ function endgame() {
         return false;
     }
 
-    var facebookShare = document.querySelector('[data-js="facebook-share"]');
 
-    facebookShare.onclick = function (e) {
-        e.preventDefault();
-        var facebookWindow = window.open('https://www.facebook.com/sharer/sharer.php?u=' + document.URL, 'facebook-popup', 'height=350,width=600');
-        if (facebookWindow.focus) {
-            facebookWindow.focus();
-        }
-        return false;
-    }
 
 }
+
 
 
 // selects questions array, hides the rules and start button
