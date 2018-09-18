@@ -5,6 +5,7 @@ var END_INTERVAL = 0;
 var START_INTERVAL = 60;
 
 var i = 0;
+var startGame = 0;
 var currentQuestion = 1;
 var answer;
 
@@ -264,6 +265,10 @@ document.getElementById('reset').addEventListener('click', function () {
         gameStarted: false
     })
 
+    database.ref('/i').set({
+        i: 0
+    })
+
     localStorage.clear();
     location.reload();
 })
@@ -297,13 +302,14 @@ database.ref('/players').on('value', function (snapshot) {
     // if only player 1 is in the game
     if (snapshot.hasChild('1')) {
         $(".send-link").show();
-    } 
+    }
     if (snapshot.hasChild('2')) {
         $(".send-link").hide();
     }
 
     // If both players are in game run all of this
-    if (snapshot.hasChild('1') && snapshot.hasChild('2') && i === 0) {
+    if (snapshot.hasChild('1') && snapshot.hasChild('2') && startGame === 0) {
+        startGame++;
         loadNextQuestion();
         marvelAPI();
     }
@@ -317,6 +323,10 @@ function setTimer() {
 
 function updatetimer() {
 
+    if (i >= questionArray.length) {
+        //setTimeout(endgame, 4000);
+        endgame();
+    }
 
     $(".timer").html("<h2>" + time + "<h2>");
 
@@ -338,6 +348,12 @@ function updatetimer() {
 }
 
 function loadNextQuestion() {
+
+    database.ref().child('i').on('value', function (snapshot) {
+        console.log("Question # " + snapshot.val().i);
+        i = snapshot.val().i;
+    });
+
     clearInterval(timer);
     console.log("loading next question: " + i);
     setTimer();
@@ -374,7 +390,11 @@ $(".choice").on("click", function () {
     $(".image-of-character").show();
 
     var picked = $(this).text();
+    
     i++;
+    database.ref('/i').set({
+        i: i
+    });
 
     if (picked === answer) {
         rightanswer();
@@ -382,11 +402,8 @@ $(".choice").on("click", function () {
         wronganswer();
     }
 
-
-    if (i === questionArray.length) {
-        //setTimeout(endgame, 4000);
-        endgame();
-    }
+    console.log("End Game " + i);
+    
 });
 // }
 
