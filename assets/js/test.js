@@ -1,8 +1,8 @@
 var timer;
-var time = 60;
+var time = 10;
 var currentGameTime = 0;
 var END_INTERVAL = 0;
-var START_INTERVAL = 60;
+var START_INTERVAL;
 
 var i = 0;
 var startGame = 0;
@@ -253,9 +253,6 @@ document.getElementById('join2').addEventListener('click', function () {
     })
 })
 
-
-// document.getElementById('questionDisplay').style.display = "none";
-
 // Reset Game function
 document.getElementById('reset').addEventListener('click', function () {
     database.ref('/players').child('1').remove()
@@ -267,6 +264,10 @@ document.getElementById('reset').addEventListener('click', function () {
 
     database.ref('/i').set({
         i: 0
+    })
+
+    database.ref('/timeLeft').set({
+        timeLeft: 10
     })
 
     localStorage.clear();
@@ -319,35 +320,60 @@ database.ref('/players').on('value', function (snapshot) {
 function setTimer() {
     //every 1 sec check db for score updates and increment timer
     timer = setInterval(updatetimer, 1000)
+    setInterval(displayTimer, 1000);
 }
 
-function updatetimer() {
 
+function displayTimer() {
+    database.ref().child('timeLeft').on('value', function (snapshot) {
+        time = snapshot.val().timeLeft;
+    });
+
+    $(".timer").html("<h2>" + time + "<h2>");
+
+    
     if (i >= questionArray.length) {
         //setTimeout(endgame, 4000);
         endgame();
     }
-
-    $(".timer").html("<h2>" + time + "<h2>");
-
-    //check the 60 second interval for each question
-    if (time === END_INTERVAL) {
-        if (i >= questionArray.length) {
-            endgame();
-        } else {
-            i++;
-            loadNextQuestion();
-            marvelAPI();
-        }
-
-    } else {
-        //time = seconds for each question
-        time--;
-    }
-
 }
 
+function updatetimer() {
+    if (localStorage.getItem("player1")) {
+
+        //check the 10 second interval for each question
+        if (time === END_INTERVAL) {
+            if (i >= questionArray.length) {
+                endgame();
+            } else {
+                i++;
+                database.ref('/i').set({
+                    i: i
+                });
+
+                database.ref('/timeLeft').set({
+                    timeLeft: 10
+                })
+
+                loadNextQuestion();
+                marvelAPI();
+            }
+
+        } else {
+            //time = seconds for each question
+            time--;
+            database.ref('/timeLeft').set({
+                timeLeft: time
+            })
+        }
+    }
+}
+
+document.getElementById('questionDisplay').style.display = "none";
+
 function loadNextQuestion() {
+
+    document.getElementById('questionDisplay').style.display = "block";
 
     database.ref().child('i').on('value', function (snapshot) {
         console.log("Question # " + snapshot.val().i);
@@ -355,9 +381,9 @@ function loadNextQuestion() {
     });
 
     clearInterval(timer);
-    console.log("loading next question: " + i);
     setTimer();
-    time = START_INTERVAL;
+    console.log("loading next question: " + i);
+
 
     database.ref('/currentQuestion').set({
         question: questionArray[i].question,
@@ -390,11 +416,15 @@ $(".choice").on("click", function () {
     $(".image-of-character").show();
 
     var picked = $(this).text();
-    
+
     i++;
     database.ref('/i').set({
         i: i
     });
+    stoptimer();
+    database.ref('/timeLeft').set({
+        timeLeft: 10
+    })
 
     if (picked === answer) {
         rightanswer();
@@ -403,12 +433,11 @@ $(".choice").on("click", function () {
     }
 
     console.log("End Game " + i);
-    
+
 });
 // }
 
 function wronganswer() {
-    stoptimer();
 
     if (localStorage.getItem("player1") !== null) {
         var ref = firebase.database().ref('/players').child('1').child('losses');
@@ -427,12 +456,12 @@ function wronganswer() {
             return newValue;
         });
     }
+
     loadNextQuestion();
     marvelAPI();
 }
 
 function rightanswer() {
-    stoptimer();
     if (localStorage.getItem("player1") !== null) {
         var ref = firebase.database().ref('/players').child('1').child('wins');
         ref.transaction(function (currentClicks) {
@@ -450,6 +479,7 @@ function rightanswer() {
             return newValue;
         });
     }
+
     loadNextQuestion();
     marvelAPI();
 }
@@ -459,8 +489,8 @@ function rightanswer() {
 function marvelAPI() {
     // Marvel Image API Keys
     //adam
-    //var PUBLIC_KEY = "a239260af7bd8c5e374e7a05d9affd2b";
-    //var PRIV_KEY = "195700d7088c134a202e57c9fb325dff831799ba";
+    var PUBLIC_KEY = "a239260af7bd8c5e374e7a05d9affd2b";
+    var PRIV_KEY = "195700d7088c134a202e57c9fb325dff831799ba";
 
     //aditi
     // var PUBLIC_KEY = "32fbc187d5d7d68799f46a214b2c214f";
@@ -471,8 +501,8 @@ function marvelAPI() {
     // var PRIV_KEY = "b4f8b331ea6ebc9a239948c204f4894475b9675e";
 
     // additional api keys
-    var PUBLIC_KEY = "60a1d83d00fd7336b25345021e6d38b0";
-    var PRIV_KEY = "2b274e1c303bf3c503f36ba39bac3b2fee543b25";
+    // var PUBLIC_KEY = "60a1d83d00fd7336b25345021e6d38b0";
+    // var PRIV_KEY = "2b274e1c303bf3c503f36ba39bac3b2fee543b25";
 
     var ts = new Date().getTime();
     var MD5 = function (d) {
@@ -538,10 +568,10 @@ function marvelAPI() {
     }
     var result = MD5(ts + PRIV_KEY + PUBLIC_KEY).toString();
 
-    database.ref().child('/currentQueston').on("value", function (snapshot) {
+    database.ref('/currentQuestion').on("value", function (snapshot) {
         var marvelQuery = 'https://gateway.marvel.com/v1/public/characters/' + snapshot.val().characterId;
 
-        // console.log(marvelQuery);
+        console.log(marvelQuery);
         $.getJSON(marvelQuery, {
                 ts: ts,
                 apikey: PUBLIC_KEY,
