@@ -1,14 +1,13 @@
+// Initialize variables
 var timer;
 var time = 10;
-var currentGameTime = 0;
 var END_INTERVAL = 0;
-var START_INTERVAL;
-
 var i = 0;
 var startGame = 0;
 var currentQuestion = 1;
 var answer;
 
+// Initialize question array
 var questionArray = [{
         question: "What is Spiderman's real name?",
         option1: "Bruce Banner",
@@ -120,15 +119,15 @@ var questionArray = [{
     }
 ];
 
+// Hide classes when game first loads
 $(".All-Game").hide();
 $(".Fun-Fact").hide();
-
-
 $(".send-link").hide();
 $("#State-display").hide();
 $(".table").hide();
 $(".social-share").hide();
 $(".game-over-text").hide();
+
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyDb8lcdSpV55OVPy6Ng1cGbaELmJUtwxw4",
@@ -147,8 +146,6 @@ document.getElementById('wins-losses-1').style.display = "none"
 document.getElementById('wins-losses-2').style.display = "none"
 document.getElementById('name-join-2').style.display = "none"
 
-// $("#startgame").css("display", "none");
-// document.getElementById('startgame').style.display = "none"
 
 // Text field for player 1
 document.getElementById('join').addEventListener('click', function () {
@@ -316,13 +313,11 @@ database.ref('/players').on('value', function (snapshot) {
     }
 })
 
-
 function setTimer() {
     //every 1 sec check db for score updates and increment timer
     timer = setInterval(updatetimer, 1000)
     setInterval(displayTimer, 1000);
 }
-
 
 function displayTimer() {
     database.ref().child('timeLeft').on('value', function (snapshot) {
@@ -331,7 +326,6 @@ function displayTimer() {
 
     $(".timer").html("<h2>" + time + "<h2>");
 
-    
     if (i >= questionArray.length) {
         //setTimeout(endgame, 4000);
         endgame();
@@ -384,7 +378,6 @@ function loadNextQuestion() {
     setTimer();
     console.log("loading next question: " + i);
 
-
     database.ref('/currentQuestion').set({
         question: questionArray[i].question,
         option1: questionArray[i].option1,
@@ -404,12 +397,7 @@ function loadNextQuestion() {
         $(".Ch4").html(snapshot.val().option4);
     });
 
-
-
 } //end of function loadNextQuestion
-
-
-
 
 // Clicking on a multiple choice answer.
 $(".choice").on("click", function () {
@@ -435,7 +423,6 @@ $(".choice").on("click", function () {
     console.log("End Game " + i);
 
 });
-// }
 
 function wronganswer() {
 
@@ -479,7 +466,6 @@ function rightanswer() {
             return newValue;
         });
     }
-
     loadNextQuestion();
     marvelAPI();
 }
@@ -582,13 +568,13 @@ function marvelAPI() {
                 characterDiv.addClass("card");
                 characterDiv.attr("style", "float:left; margin: 0px; width:200px;");
                 // sort of a long dump you will need to sort through
-                // console.log(response);
+
                 var path = (response.data.results[0].thumbnail.path);
                 var extension = (response.data.results[0].thumbnail.extension);
 
                 var image = $("<img>");
                 image.attr("src", path + '.' + extension).attr("height", "100%");
-                // image.attr("src", response.url).attr("height", "175");
+             
                 image.addClass("card-img-top gif");
                 characterDiv.append(image);
 
@@ -608,17 +594,16 @@ function stoptimer() {
 
 function endgame() {
 
-    // $(".question").html("GAME OVER!!!! MUHAHAHAHA");
+    localStorage.clear();
     $(".question").hide();
     $("#questionDisplay").hide();
     $(".image-of-character").hide();
     clearInterval(timer);
     $(".timer").empty();
-    // $(".choice").empty();
-    // $("button").hide();
     $(".game-over-text").show();
     $(".table").show();
     $("#State-display").show();
+
     // Update table with stats 
     database.ref('/players').child('1').once('value', function (snapshot) {
         $("#name1table").html(snapshot.val().name.substr(0, 8));
@@ -649,8 +634,6 @@ function endgame() {
 
 }
 
-
-
 // selects questions array, hides the rules and start button
 $("#startgame").on("click", function () {
     $(".rules").hide();
@@ -659,7 +642,6 @@ $("#startgame").on("click", function () {
 });
 
 
-//////////////////////////////////////////////////////////////////////////////////////
 //omdb function
 $("#Marvel-Data").on("click", function (event) {
     event.preventDefault();
