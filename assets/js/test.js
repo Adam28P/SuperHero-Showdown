@@ -370,13 +370,11 @@ function loadNextQuestion() {
     document.getElementById('questionDisplay').style.display = "block";
 
     database.ref().child('i').on('value', function (snapshot) {
-        console.log("Question # " + snapshot.val().i);
         i = snapshot.val().i;
     });
 
     clearInterval(timer);
     setTimer();
-    console.log("loading next question: " + i);
 
     database.ref('/currentQuestion').set({
         question: questionArray[i].question,
@@ -419,9 +417,6 @@ $(".choice").on("click", function () {
     } else {
         wronganswer();
     }
-
-    console.log("End Game " + i);
-
 });
 
 function wronganswer() {
@@ -557,7 +552,6 @@ function marvelAPI() {
     database.ref('/currentQuestion').on("value", function (snapshot) {
         var marvelQuery = 'https://gateway.marvel.com/v1/public/characters/' + snapshot.val().characterId;
 
-        console.log(marvelQuery);
         $.getJSON(marvelQuery, {
                 ts: ts,
                 apikey: PUBLIC_KEY,
@@ -661,7 +655,6 @@ function omdbAPI() {
         url: queryURL,
         method: "GET"
     }).then(function (response) {
-        console.log(response);
         if (response.Error) {
             console.log("Error: " + response.Error);
             return
